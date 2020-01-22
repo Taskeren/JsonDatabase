@@ -61,22 +61,39 @@ public class JsonDatabase {
 		return this;
 	}
 
-	public <T> T set(String key, T val) {
+	public JsonDatabase set(String key, Object val) {
 		json.put(key, val);
 		if(autosave) save();
-		return val;
+		return this;
 	}
 
-	public Object get(String key) {
-		return json.get(key);
+	public JsonDatabase set(Object key, Object val) {
+		set(String.valueOf(key), val);
+		return this;
+	}
+
+	public Object get(Object key) {
+		return json.get(String.valueOf(key));
 	}
 
 	public <T> T get(String key, Class<T> cls) {
 		return json.get(key, cls);
 	}
 
+	public <T> T get(Object key, Class<T> cls) {
+		return get(String.valueOf(key), cls);
+	}
+
 	public <T> T get(String key, T defaultVal) {
 		return (T) json.getOrDefault(key, defaultVal);
+	}
+
+	public <T> T get(Object key, T defaultVal) {
+		return get(String.valueOf(key), defaultVal);
+	}
+
+	public boolean has(String key) {
+		return get(key) != null;
 	}
 
 }
