@@ -5,8 +5,9 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
 import java.io.File;
+import java.util.function.BiConsumer;
 
-public class JsonDatabase {
+public class JsonDatabase<K, V> {
 
 	protected final File file;
 	protected final String newConfigContent;
@@ -61,39 +62,27 @@ public class JsonDatabase {
 		return this;
 	}
 
-	public JsonDatabase set(String key, Object val) {
-		json.put(key, val);
+	public JsonDatabase set(K key, V val) {
+		json.put(key.toString(), val);
 		if(autosave) save();
 		return this;
 	}
 
-	public JsonDatabase set(Object key, Object val) {
-		set(String.valueOf(key), val);
-		return this;
+	public V get(K key) {
+		return (V) json.get(key);
 	}
 
-	public Object get(Object key) {
-		return json.get(String.valueOf(key));
+	public V get(K key, V defaultVal) {
+		return (V) json.getOrDefault(key, defaultVal);
 	}
 
-	public <T> T get(String key, Class<T> cls) {
-		return json.get(key, cls);
-	}
-
-	public <T> T get(Object key, Class<T> cls) {
-		return get(String.valueOf(key), cls);
-	}
-
-	public <T> T get(String key, T defaultVal) {
-		return (T) json.getOrDefault(key, defaultVal);
-	}
-
-	public <T> T get(Object key, T defaultVal) {
-		return get(String.valueOf(key), defaultVal);
-	}
-
-	public boolean has(String key) {
+	public boolean has(K key) {
 		return get(key) != null;
+	}
+
+	// Supers
+	public void forEach(BiConsumer<K, V> c) {
+		json.forEach((k,v) -> c.accept((K)k, (V)v));
 	}
 
 }
