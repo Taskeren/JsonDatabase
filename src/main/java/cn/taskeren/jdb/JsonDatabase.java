@@ -1,10 +1,12 @@
 package cn.taskeren.jdb;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.function.BiConsumer;
 
 public class JsonDatabase<K, V> {
@@ -68,12 +70,28 @@ public class JsonDatabase<K, V> {
 		return this;
 	}
 
+	public Object getRaw(String key) {
+		return json.get(key);
+	}
+
 	public V get(K key) {
-		return (V) json.get(key);
+		return (V) json.get(key.toString());
 	}
 
 	public V get(K key, V defaultVal) {
-		return (V) json.getOrDefault(key, defaultVal);
+		return (V) json.getOrDefault(key.toString(), defaultVal);
+	}
+
+	public <C> C convert(K key, Type t) {
+		return convert(key, t, null);
+	}
+
+	public <C> C convert(K key, C defaultVal) {
+		return convert(key, defaultVal.getClass(), defaultVal);
+	}
+
+	public <C> C convert(K key, Type t, C defaultVal) {
+		return Convert.convert(t, get(key));
 	}
 
 	public boolean has(K key) {
