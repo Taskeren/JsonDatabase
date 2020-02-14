@@ -7,6 +7,8 @@ import cn.hutool.json.JSONUtil;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class JsonDatabase<K, V> {
@@ -101,6 +103,10 @@ public class JsonDatabase<K, V> {
 	// Supers
 	public void forEach(BiConsumer<K, V> c) {
 		json.forEach((k,v) -> c.accept((K)k, (V)v));
+	}
+
+	public Set<String> keySet() {
+		return json.keySet();
 	}
 
 }
